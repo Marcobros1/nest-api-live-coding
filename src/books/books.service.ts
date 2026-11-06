@@ -3,39 +3,35 @@ import { Pool } from 'pg';
 import { Book, BookRow, buildBookRowToBook } from './book';
 import { CreateAndUpdateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
+import { BooksContract } from './books.contract';
 
 @Injectable()
-export class BooksService {
+export class BooksService implements BooksContract{
   constructor(private readonly pool: Pool) {} // NestJS nos da el Pool
 
-  // GET /api/books   y   GET /api/books?author=gabriel
+  // GET /api/books   y   GET /api/books?author=gabriel&maxPages=150
   async findAll(author?: string, maxPages?: number): Promise<Book[]> {
-    const conditions: string[] = []; // trozos del WHERE
-    const params: (string | number)[] = []; // valores para $1, $2...
-
-    if (author) {
-      params.push(author);
-      // ILIKE: como LIKE, pero sin mirar mayúsculas
-      conditions.push(`author ILIKE '%' || $${params.length} || '%'`);
-    }
-
-    if (maxPages !== undefined) {
-      params.push(maxPages);
-      conditions.push(`pages <= $${params.length}`);
-    }
-
-    // Solo añadimos WHERE si hay algún filtro
-    const where = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
-
     const result = await this.pool.query<BookRow>(
       `SELECT id, title, author, pages, created_at
        FROM books
-       ${where}
+       WHERE ($1::text IS NULL OR author ILIKE '%' || $1 || '%')
+         AND ($2::int IS NULL OR pages <= $2)
        ORDER BY id`,
-      params,
+      // si un filtro no llega → NULL → esa condición se ignora
+      // ILIKE: como LIKE, pero sin mirar mayúsculas
+      [author || null, maxPages ?? null],
     );
     return result.rows.map(buildBookRowToBook);
   }
+
+  async getLength(): Promise<number> {
+    const result = await this.pool.query<{ total: string }>(
+      'SELECT COUNT(*) AS total FROM books',
+    );
+    // COUNT(*) es bigint → pg lo devuelve como string
+    return Number(result.rows[0].total);
+  }
+
 
   // GET /api/books/:id
   async findOne(id: number): Promise<Book> {
@@ -51,11 +47,12 @@ export class BooksService {
 
   // POST /api/books
   async create(dto: CreateAndUpdateBookDto): Promise<Book> {
+    const {title, author, pages} = dto || {}; // para que no de warning de variable sin usar
     const result = await this.pool.query<BookRow>(
       `INSERT INTO books (title, author, pages)
        VALUES ($1, $2, $3)
        RETURNING id, title, author, pages, created_at`,
-      [dto.title, dto.author, dto.pages],
+      [title, author, pages],
     );
     return buildBookRowToBook(result.rows[0]); // RETURNING nos da el libro guardado, con su id
   }

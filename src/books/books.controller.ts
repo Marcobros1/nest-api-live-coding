@@ -26,10 +26,10 @@ export class BooksController {
   ) {
     return this.booksService.findAll(author, maxPages);
   }
-  /*
+  
   @Get('count')
-  getCount() {
-    return { total: this.booksService.getLength() };
+  async getCount() {
+    return { total: await this.booksService.getLength() };
   }
 
   @Get(':id') // GET /api/books/1
@@ -52,12 +52,12 @@ export class BooksController {
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: CreateAndUpdateBookDto,
   ) {
-    return this.booksService.updateWhole(id, dto);
+    return this.booksService.update(id, dto);
   }
 
   @Delete(':id') // DELETE /api/books/1
   @HttpCode(204) // responde 204 (sin contenido) en vez de 200
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.booksService.remove(id);
-  }*/
+  }
 }
