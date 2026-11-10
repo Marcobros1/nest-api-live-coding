@@ -1,5 +1,12 @@
 import { Transform } from 'class-transformer';
-import { IsInt, IsString, Max, MaxLength, Min, MinLength } from 'class-validator';
+import {
+  IsInt,
+  IsString,
+  Max,
+  MaxLength,
+  Min,
+  MinLength,
+} from 'class-validator';
 
 // Lo que tiene que enviar el cliente para crear un libro
 export class CreateAndUpdateBookDto {

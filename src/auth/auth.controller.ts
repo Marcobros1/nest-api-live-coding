@@ -1,4 +1,13 @@
-import { Body, Controller, Get, HttpCode, Post, Req, Res, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
@@ -17,11 +26,10 @@ export class AuthController {
 
   @Post('login') // POST /api/auth/login
   @HttpCode(200) // un login no crea nada: 200 en vez de 201
-  login(@Body() dto: LoginDto,
-        @Res() res: Response) {
+  login(@Body() dto: LoginDto, @Res() res: Response) {
     return this.authService.login(dto);
   }
-  
+
   /*@Post('login') // POST /api/auth/login
   @HttpCode(200) // un login no crea nada: 200 en vez de 201
    async login(@Body() dto: LoginDto, @Res({ passthrough: true }) res: Response) {

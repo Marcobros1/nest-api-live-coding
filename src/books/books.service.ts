@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Pool } from 'pg';
 import { Book, BookRow, buildBookRowToBook } from './book';
 import { CreateAndUpdateBookDto } from './dto/create-book.dto';
@@ -6,7 +10,7 @@ import { UpdateBookDto } from './dto/update-book.dto';
 import { BooksContract } from './books.contract';
 
 @Injectable()
-export class BooksService implements BooksContract{
+export class BooksService implements BooksContract {
   constructor(private readonly pool: Pool) {} // NestJS nos da el Pool
 
   // GET /api/books   y   GET /api/books?author=gabriel&maxPages=150
@@ -32,7 +36,6 @@ export class BooksService implements BooksContract{
     return Number(result.rows[0].total);
   }
 
-
   // GET /api/books/:id
   async findOne(id: number): Promise<Book> {
     const result = await this.pool.query<BookRow>(
@@ -47,7 +50,7 @@ export class BooksService implements BooksContract{
 
   // POST /api/books
   async create(dto: CreateAndUpdateBookDto): Promise<Book> {
-    const {title, author, pages} = dto || {}; // para que no de warning de variable sin usar
+    const { title, author, pages } = dto || {}; // para que no de warning de variable sin usar
     const result = await this.pool.query<BookRow>(
       `INSERT INTO books (title, author, pages)
        VALUES ($1, $2, $3)
@@ -59,7 +62,11 @@ export class BooksService implements BooksContract{
 
   // PATCH /api/books/:id
   async update(id: number, dto: UpdateBookDto): Promise<Book> {
-    if (dto.title === undefined && dto.author === undefined && dto.pages === undefined) {
+    if (
+      dto.title === undefined &&
+      dto.author === undefined &&
+      dto.pages === undefined
+    ) {
       throw new BadRequestException('Envía al menos un campo');
     }
     const book = await this.findOne(id); // 404 si no existe
@@ -70,7 +77,12 @@ export class BooksService implements BooksContract{
        WHERE id = $4
        RETURNING id, title, author, pages, created_at`,
       // ?? = "el valor nuevo; si no ha llegado, el de antes"
-      [dto.title ?? book.title, dto.author ?? book.author, dto.pages ?? book.pages, id],
+      [
+        dto.title ?? book.title,
+        dto.author ?? book.author,
+        dto.pages ?? book.pages,
+        id,
+      ],
     );
     return buildBookRowToBook(result.rows[0]);
   }

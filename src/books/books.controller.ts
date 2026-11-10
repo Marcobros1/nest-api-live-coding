@@ -30,7 +30,7 @@ export class BooksController {
   ) {
     return this.booksService.findAll(author, maxPages);
   }
-  
+
   @Get('count')
   async getCount() {
     return { total: await this.booksService.getLength() };

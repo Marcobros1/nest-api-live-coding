@@ -21,6 +21,8 @@ describe('EmployeeGuard', () => {
   it('no deja pasar a un cliente (403)', async () => {
     fakeUsersService.findById.mockResolvedValue({ id: 1, role: 'customer' });
 
-    await expect(guard.canActivate(context)).rejects.toThrow(ForbiddenException); // rejects: la promesa falla
+    await expect(guard.canActivate(context)).rejects.toThrow(
+      ForbiddenException,
+    ); // rejects: la promesa falla
   });
 });

@@ -27,7 +27,7 @@ describe('BooksService', () => {
     expect(fakePool.query).not.toHaveBeenCalled(); // ni una sola consulta
   });
 
-it('findOne devuelve el libro convertido cuando la base de datos sí encuentra una fila', async () => {
+  it('findOne devuelve el libro convertido cuando la base de datos sí encuentra una fila', async () => {
     // Preparar: la "base de datos" devuelve una fila
     fakePool.query.mockResolvedValue({
       rows: [
@@ -37,8 +37,8 @@ it('findOne devuelve el libro convertido cuando la base de datos sí encuentra u
           author: 'Michael Ende',
           pages: 256,
           created_at: new Date('2026-01-01'),
-        }
-      ]
+        },
+      ],
     });
 
     // Ejecutar

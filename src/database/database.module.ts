@@ -6,7 +6,8 @@ import { Pool } from 'pg';
     {
       provide: Pool, // cuando alguien pida un Pool...
       // ...NestJS ejecuta esta función una vez y le da el resultado
-      useFactory: () => new Pool({ connectionString: process.env.DATABASE_URL }),
+      useFactory: () =>
+        new Pool({ connectionString: process.env.DATABASE_URL }),
     },
   ],
   exports: [Pool], // otros módulos pueden pedir el Pool

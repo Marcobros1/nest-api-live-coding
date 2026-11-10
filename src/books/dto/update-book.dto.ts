@@ -1,4 +1,11 @@
-import { IsInt, IsString, MaxLength, Min, MinLength, ValidateIf } from 'class-validator';
+import {
+  IsInt,
+  IsString,
+  MaxLength,
+  Min,
+  MinLength,
+  ValidateIf,
+} from 'class-validator';
 
 // PATCH: los campos pueden faltar, pero si llegan tienen que ser válidos
 export class UpdateBookDto {
