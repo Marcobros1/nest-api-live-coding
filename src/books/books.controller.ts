@@ -17,7 +17,7 @@ import { CreateAndUpdateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 import { AuthGuard } from '../auth/auth.guard';
 import { EmployeeGuard } from '../auth/employee.guard';
-import { AdminGuard } from 'src/auth/admin.guard';
+import { AdminGuard } from '../auth/admin.guard';
 
 @Controller('books') // todas las rutas de esta clase: /api/books...
 export class BooksController {

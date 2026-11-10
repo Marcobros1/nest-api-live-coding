@@ -25,4 +25,18 @@ describe('buildBookRowToBook', () => {
       createdAt: new Date('2026-01-01'),
     });
   });
+
+  it('comprueba que el libro no tiene la propiedad created_at', () => {
+    const row: BookRow = {
+      id: 1,
+      title: 'Momo',
+      author: 'Michael Ende',
+      pages: 256,
+      created_at: new Date('2026-01-01'),
+    };
+
+    const book = buildBookRowToBook(row);
+
+    expect(book).not.toHaveProperty('created_at');
+  });
 });
