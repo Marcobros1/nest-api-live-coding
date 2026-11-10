@@ -1,3 +1,11 @@
+CREATE TABLE users (
+  id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  email VARCHAR(255) NOT NULL UNIQUE,      -- no puede haber dos iguales
+  password_hash TEXT NOT NULL,             -- el hash, nunca la contraseña
+  role VARCHAR(20) NOT NULL DEFAULT 'customer'
+    CHECK (role IN ('customer', 'employee'))  -- solo estos dos roles
+);
+
 CREATE TABLE books (
   id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY, -- el id lo pone PostgreSQL
   title VARCHAR(200) NOT NULL,

@@ -10,10 +10,14 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { BooksService } from './books.service';
 import { CreateAndUpdateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
+import { AuthGuard } from '../auth/auth.guard';
+import { EmployeeGuard } from '../auth/employee.guard';
+import { AdminGuard } from 'src/auth/admin.guard';
 
 @Controller('books') // todas las rutas de esta clase: /api/books...
 export class BooksController {
@@ -38,6 +42,7 @@ export class BooksController {
   }
 
   @Post() // POST /api/books → responde 201
+  @UseGuards(AuthGuard, EmployeeGuard) // 1.º ¿quién eres?  2.º ¿eres empleado?
   create(@Body() dto: CreateAndUpdateBookDto) {
     return this.booksService.create(dto);
   }
@@ -57,6 +62,7 @@ export class BooksController {
 
   @Delete(':id') // DELETE /api/books/1
   @HttpCode(204) // responde 204 (sin contenido) en vez de 200
+  @UseGuards(AuthGuard, AdminGuard)
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.booksService.remove(id);
   }
