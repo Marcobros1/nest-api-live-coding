@@ -26,4 +26,38 @@ describe('BooksService', () => {
 
     expect(fakePool.query).not.toHaveBeenCalled(); // ni una sola consulta
   });
+
+it('findOne devuelve el libro convertido cuando la base de datos sí encuentra una fila', async () => {
+    // Preparar: la "base de datos" devuelve una fila
+    fakePool.query.mockResolvedValue({
+      rows: [
+        {
+          id: 1,
+          title: 'Momo',
+          author: 'Michael Ende',
+          pages: 256,
+          created_at: new Date('2026-01-01'),
+        }
+      ]
+    });
+
+    // Ejecutar
+    const book = await service.findOne(1);
+
+    // Comprobar
+    expect(book).toEqual({
+      id: 1,
+      title: 'Momo',
+      author: 'Michael Ende',
+      pages: 256,
+      createdAt: new Date('2026-01-01'),
+    });
+  });
+  it('remove: si el libro no existe, lanza NotFoundException', async () => {
+    // Preparar: la "base de datos" no devuelve filas
+    fakePool.query.mockResolvedValue({ rows: [] });
+
+    // Ejecutar y comprobar: tiene que fallar con NotFoundException
+    await expect(service.remove(99)).rejects.toThrow(NotFoundException);
+  });
 });
